@@ -1,0 +1,37 @@
+services:
+  frigate:
+    image: ghcr.io/blakeblackshear/frigate:stable
+    container_name: frigate
+    privileged: true
+    restart: unless-stopped
+    shm_size: "256mb"  # Adjust based on camera needs
+
+    environment:
+      FRIGATE_RTSP_PASSWORD: "'FUCKYOU'"  # Change to your RTSP password
+
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /home/user/frigateconfig/config.yml:/config/config.yml:ro  # Mount config file, not directory
+      - /mnt/NVR:/media/frigate  # Directory for clips and recordings
+      - type: tmpfs
+        target: /tmp/cache  # In-memory storage for faster processing (for snapshots)
+        tmpfs:
+          size: 1000000000  # Size of the tmpfs in bytes (adjust as needed)
+
+    ports:
+      - "5000:5000"  # Web interface
+
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+    networks:
+      - frigate_network
+
+networks:
+  frigate_network:
+    name: frigate_network
