@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  jackett:
+    image: linuxserver/jackett:latest
+    container_name: jackett
+    environment:
+      - PUID=1000 # Adjust based on your user ID
+      - PGID=1000 # Adjust based on your group ID
+      - FLARESOLVERR_API=http://flaresolverr:8191 # Set FlareSolverr API URL
+    volumes:
+      - /home/user/jackett-config:/config
+      - /mnt/sas_dataset/torrents:/downloads
+    ports:
+      - "9117:9117"  # Jackett Web UI
+    restart: unless-stopped
+    networks:
+      - flare_network
+    depends_on:
+      - flaresolverr
+
+  flaresolverr:
+    image: flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    ports:
+      - "8191:8191"  # FlareSolverr API
+    restart: unless-stopped
+    networks:
+      - flare_network
+    environment:
+      - LOG_LEVEL=info
+      - MAX_TIMEOUT=30000  # Timeout in ms (you can adjust this if needed)
+
+networks:
+  flare_network:
+    driver: bridge
