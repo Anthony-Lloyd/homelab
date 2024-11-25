@@ -7,7 +7,7 @@ services:
     shm_size: "256mb"  # Adjust based on camera needs
 
     environment:
-      FRIGATE_RTSP_PASSWORD: "'FUCKYOU'"  # Change to your RTSP password
+      FRIGATE_RTSP_PASSWORD: "'PASSWORD'"  # Change to your RTSP password
 
     volumes:
       - /etc/localtime:/etc/localtime:ro
